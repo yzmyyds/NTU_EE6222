@@ -1,0 +1,29 @@
+# Python cache & temp files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+
+# Virtual environments
+env/
+venv/
+PY_311/
+EE6222_Machine_Vision/
+
+# PyTorch / training outputs
+*.h5             # dataset files
+logs/            # tensorboard / logs
+*.pth             # trained model weights
+*.pt             # trained model weights
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+
+# Misc
+*.bak
+*.tmp
