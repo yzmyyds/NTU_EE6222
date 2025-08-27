@@ -39,14 +39,14 @@ def main():
     net = DnCNN(channels=1, num_of_layers=opt.num_of_layers)
     net.apply(weights_init_kaiming)
     criterion = nn.MSELoss(size_average=False)
-    # # Move to GPU
-    # device_ids = [0]
-    # model = nn.DataParallel(net, device_ids=device_ids).cuda()
-    # criterion.cuda()
-    # Move to CPU
-    device = torch.device("cpu")
-    model = net.to(device)
-    criterion = criterion.to(device)
+    # Move to GPU
+    device_ids = [0]
+    model = nn.DataParallel(net, device_ids=device_ids).cuda()
+    criterion.cuda()
+    # # Move to CPU
+    # device = torch.device("cpu")
+    # model = net.to(device)
+    # criterion = criterion.to(device)
     # Optimizer
     optimizer = optim.Adam(model.parameters(), lr=opt.lr)
     # training
@@ -79,10 +79,10 @@ def main():
                     noise[n,:,:,:] = torch.FloatTensor(sizeN).normal_(mean=0, std=stdN[n]/255.)
 
             imgn_train = img_train + noise
-            # img_train, imgn_train = Variable(img_train.cuda()), Variable(imgn_train.cuda())
-            # noise = Variable(noise.cuda())
-            img_train, imgn_train = img_train.to(device), imgn_train.to(device)
-            noise = noise.to(device)
+            img_train, imgn_train = Variable(img_train.cuda()), Variable(imgn_train.cuda())
+            noise = Variable(noise.cuda())
+            # img_train, imgn_train = img_train.to(device), imgn_train.to(device)
+            # noise = noise.to(device)
 
             out_train = model(imgn_train)
             loss = criterion(out_train, noise) / (imgn_train.size()[0]*2)
@@ -108,8 +108,8 @@ def main():
             img_val = torch.unsqueeze(dataset_val[k], 0)
             noise = torch.FloatTensor(img_val.size()).normal_(mean=0, std=opt.val_noiseL/255.)
             imgn_val = img_val + noise
-            # img_val, imgn_val = Variable(img_val.cuda(), volatile=True), Variable(imgn_val.cuda(), volatile=True)
-            img_val, imgn_val = img_val.to(device), imgn_val.to(device)
+            img_val, imgn_val = Variable(img_val.cuda(), volatile=True), Variable(imgn_val.cuda(), volatile=True)
+            # img_val, imgn_val = img_val.to(device), imgn_val.to(device)
             out_val = torch.clamp(imgn_val-model(imgn_val), 0., 1.)
             psnr_val += batch_PSNR(out_val, img_val, 1.)
         psnr_val /= len(dataset_val)

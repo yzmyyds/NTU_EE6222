@@ -5,6 +5,7 @@ import glob
 import numpy as np
 import torch
 import torch.nn as nn
+import torchvision.utils as utils
 from torch.autograd import Variable
 from models import DnCNN
 from utils import *
@@ -17,6 +18,7 @@ parser.add_argument("--num_of_layers", type=int, default=17, help="Number of tot
 parser.add_argument("--logdir", type=str, default="logs", help='path of log files')
 parser.add_argument("--test_data", type=str, default='Set12', help='test on Set12 or Set68')
 parser.add_argument("--test_noiseL", type=float, default=25, help='noise level used on test set')
+parser.add_argument("--save_results",type=str,default='Example12',help='folder to save results 12 or 68')
 opt = parser.parse_args()
 
 def normalize(data):
@@ -53,6 +55,8 @@ def main():
         ## if you are using older version of PyTorch, torch.no_grad() may not be supported
         # ISource, INoisy = Variable(ISource.cuda(),volatile=True), Variable(INoisy.cuda(),volatile=True)
         # Out = torch.clamp(INoisy-model(INoisy), 0., 1.)
+        #Save noisy image and denoised image to Example folder locally
+        utils.save_image(torch.cat((ISource, INoisy, Out),0), f.replace(opt.test_data, opt.save_results))
         psnr = batch_PSNR(Out, ISource, 1.)
         psnr_test += psnr
         print("%s PSNR %f" % (f, psnr))
