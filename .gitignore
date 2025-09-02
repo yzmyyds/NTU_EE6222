@@ -1,3 +1,5 @@
 Projects/DnCNN_Pytorch/data/
 Projects/DnCNN_Pytorch/logs/
+Projects/DnCNN_Pytorch/.venv/
+Projects/DnCNN_Pytorch/__pycache__/
 Projects/DnCNN_Pytorch/*.h5
