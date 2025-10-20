@@ -64,8 +64,18 @@ Therefore, I fetch the dataset from sklearn package directly \ref{fig:fetch}.
 \subsection{Normalization and Standarlization}
 Since the MINIST dataset had been well preprocessed and tested by plenty of researchers, I didn't do too much basic preprocessing, like outlier and missing value detection. However, I though normalization and 
 standarlization arer still neccessary for the following basic classifiers, which may be affected intensely by the scle of features. So I rearrange the vectors to 0 mean and unit variance.
+\subsection{Dataset Partition}
+I found the number of samples (70,000) is too large, which may lead to many difficulties in my following experiment. Firstly, I will traing several classifiers with many dimension reduction methods, 
+meaning the number of training process will be big. If I train 50,000-70,000 for each training, the consummed time will be very long. Secondly, my classifers which will be used are simple and bisic, therefore, they are 
+easy to converge with small scale of data. With these two reason, I deciode to extract 7,000 samples from the origin dataset formly to reduce the expence of time.
 
-Moreover, I found the number of samples (70,000) is too large, which may lead to many difficulties in my following experiment. Firstly, in the following experiment, I would traing several classifiers with many 
+After that, I split the dataset into training set and testing set through \textit{\textbf{train\_test\_split}} function with ratio of 6:1 and finished the process of preparation of dataset \ref{fig:datapartition}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Images/Datapartition.png}
+    \caption{Dimension of practical dataset}
+    \label{fig:datapartition}
+\end{figure}
 \section{Methodology}
 
 \section{Results and Discussion}
