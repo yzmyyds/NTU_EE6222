@@ -14,6 +14,7 @@
 \usepackage{color}
 \usepackage[utf8]{inputenc}  
 \usepackage{cite}  
+\usepackage{indentfirst}
 
 \geometry{margin=1in}
 
@@ -40,9 +41,31 @@
 \newpage
 
 \section{Introduction}
+In this Assignment, I selected the MINIST dataset for training and testing the performance of classifiers. As for the dimension of images are largee,
+I explored several dimensionality reduction methods to reduce the dimension of data while trying to retain the most important features, including \textbf{PCA}, \textbf{LDA}, 
+combined method (Fisherfaces), \textbf{LLE}, \textbf{Isomap}, and \textbf{PaCMAP}. I compared the effectiveness of these methods by plotting their performance with varying number of
+dimensions. 
 
+In addition, I establish several basic classifiers, like \textbf{MMD}, \textbf{KNN}, and include Logistic Regression Classifier with sklearn package. Therefore, I not only 
+compare the effectiveness of different dimensionality reduction methods, but also access the accuracy of classifiy images for these classifer methods. I would 
+describe the details of my experiment in the fllowing sections.  
 \section{Dataset and Preprocessing}
+\subsection{Dtaset Descrption}
+The MINIST dataset contains \textbf{70,000} images of handwritten digits (0-9) with a resolution of 28x28 pixels, which means there are \textbf{10} classes intotal. Each image had been saved with the 
+format of vector with \textbf{784 in length}. In addition, the images are only have one channel, which means they are grayscale pixels. Because of the pre-shaped vectors, single channel, and 
+easy to get features, I think MINIST dataset is suitable for this assignment.
+Therefore, I fetch the dataset from sklearn package directly \ref{fig:fetch}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/MINIST_fetch.png}
+    \caption{Fetch Code}
+    \label{fig:fetch}
+\end{figure}
+\subsection{Normalization and Standarlization}
+Since the MINIST dataset had been well preprocessed and tested by plenty of researchers, I didn't do too much basic preprocessing, like outlier and missing value detection. However, I though normalization and 
+standarlization arer still neccessary for the following basic classifiers, which may be affected intensely by the scle of features. So I rearrange the vectors to 0 mean and unit variance.
 
+Moreover, I found the number of samples (70,000) is too large, which may lead to many difficulties in my following experiment. Firstly, in the following experiment, I would traing several classifiers with many 
 \section{Methodology}
 
 \section{Results and Discussion}
