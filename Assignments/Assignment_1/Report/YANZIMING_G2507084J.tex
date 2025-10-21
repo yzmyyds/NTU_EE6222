@@ -86,6 +86,29 @@ After that, I split the dataset into training set and testing set through \texti
 
 \subsection{Dimensionality Reduction Methods}
 \subsubsection{Linear Discriminant Analysis}
+Linear Discriminant Analysis (LDA) aims to find a linear combination of features with weight matrix $\mathbf{w}$ and bias $b$ to transform the data into linear space, ensuring that the seperation between different 
+classes is maximized while the variance with each class is minimized.
+\vspace{0.5cm}
+
+\noindent \textbf{Step 1: Mean Value Computation}
+
+With given m classes \{$w_1$, $w_2$, ... $w_m$\}, there are c samples in each class w: \{$X_1$, $X_2$, ... $X_c$\}. For each sample vector, it has n features, \{$x_1$, $x_2$, ... , $x_n$\}. In this experiment, \textbf{n=784}.
+
+Overall Mean:
+\begin{equation}
+    \mu_t = \frac{1}{N}\sum_{i=1}^{N} x_i
+\end{equation}
+
+Class Mean:
+\begin{equation}
+    \mu_i = \frac{1}{n_i}\sum_{j=1}^{n_i} x_j
+\end{equation}
+
+Where $N$ is the total number of samples, and $n_i$ is the number of samples in class $w_i$.
+
+\vspace{0.5cm}
+\noindent \textbf{Step 2: Scatter Matrix Computation}
+
 \subsubsection{Principal Component Analysis}
 \subsubsection{Fisherfaces}
 \subsubsection{Locally Linear Embedding}
