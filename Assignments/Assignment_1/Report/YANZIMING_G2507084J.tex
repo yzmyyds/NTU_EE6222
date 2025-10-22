@@ -86,7 +86,7 @@ After that, I split the dataset into training set and testing set through \texti
 
 \subsection{Dimensionality Reduction Methods}
 \subsubsection{Linear Discriminant Analysis}
-Linear Discriminant Analysis (LDA) aims to find a linear combination of features with weight matrix $\mathbf{w}$ and bias $b$ to transform the data into linear space, ensuring that the seperation between different 
+Linear Discriminant Analysis (LDA) aims to find a linear combination of features with weight matrix $\mathbf{w}$ to transform the data into linear space, ensuring that the seperation between different 
 classes is maximized while the variance with each class is minimized.
 \vspace{0.5cm}
 
@@ -118,6 +118,31 @@ Within-Class Scatter Matrix:
 \begin{equation}
     S_W=\sum_{j=1}^{m}\sum_{x_i \in w_j}(x_i-\mu_j)(x_i-\mu_j)^T
 \end{equation}
+
+\noindent \textbf{Step 3: Weight Matrix Computation}
+
+As I mentioned before, the LDA aims to find the optimal weight matrix to seperate classes on two dimension, equaling to the problem: maximize the ratio of between-class scatter to within-class scatter.
+\begin{equation}
+    \mathbf{w}^*=\mathop{\arg\max}\limits_{w}\frac{|w^TS_Bw|}{|w^TS_Ww|}
+\end{equation} 
+
+Since the $S_Bw_i=\lambda_iS_Ww_i$,
+\begin{equation}
+    \lambda\mathbf{w}=S_W^{-1}S_B\mathbf{w}
+\end{equation}
+
+Therefore, the $\mathbf{w}$ is the eigenvectors matrix according to eigenvalue $\lambda$, the largest $\lambda$ refers to best matrix $\mathbf{w}^*$.
+
+\vspace{0.5cm}
+\noindent \textbf{Step 4: Transform Dataset}
+
+After getting the weight matrix, the transformation of input data $\mathbf{X}$ is:
+\begin{equation}
+    \mathbf{Y} = \mathbf{X}\mathbf{w}^*
+\end{equation}
+
+In practice, we will choose the $k^{th}$ value of sorted eigenvalues to form $\mathbf{w}^*$. Theoritically, LDA is designed to project samples onto 
+a lower-dimensional subspace, with the dimensionality being at most C - 1, because the rank of $S_B$ is at most C-1, C is the number of classes.
 \subsubsection{Principal Component Analysis}
 \subsubsection{Fisherfaces}
 \subsubsection{Locally Linear Embedding}
