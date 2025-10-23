@@ -49,6 +49,7 @@ dimensions.
 In addition, I establish several basic classifiers, like \textbf{MMD}, \textbf{KNN}, and include Logistic Regression Classifier with sklearn package. Therefore, I not only 
 compare the effectiveness of different dimensionality reduction methods, but also access the accuracy of classifiy images for these classifer methods. I would 
 describe the details of my experiment in the fllowing sections.  
+
 \section{Dataset and Preprocessing}
 \subsection{Dtaset Descrption}
 The MINIST dataset contains \textbf{70,000} images of handwritten digits (0-9) with a resolution of 28x28 pixels, which means there are \textbf{10} classes intotal. Each image had been saved with the 
@@ -64,12 +65,12 @@ Therefore, I fetch the dataset from sklearn package directly \ref{fig:fetch}.
 \subsection{Normalization and Standarlization}
 Since the MINIST dataset had been well preprocessed and tested by plenty of researchers, I didn't do too much basic preprocessing, like outlier and missing value detection. However, I though normalization and 
 standarlization arer still neccessary for the following basic classifiers, which may be affected intensely by the scle of features. So I rearrange the vectors to 0 mean and unit variance.
-\begin{equation}
+\[
     \bar X=\frac{X}{L-1}
-\end{equation}
-\begin{equation}
+\]
+\[
     X_{std}=\frac{X-\mu}{\sigma}
-\end{equation}
+\]
 \subsection{Dataset Partition}
 I found the number of samples (70,000) is too large, which may lead to many difficulties in my following experiment. Firstly, I will traing several classifiers with many dimension reduction methods, 
 meaning the number of training process will be big. If I train 50,000-70,000 for each training, the consummed time will be very long. Secondly, my classifers which will be used are simple and bisic, therefore, they are 
@@ -84,47 +85,47 @@ After that, I split the dataset into training set and testing set through \texti
 \end{figure}
 \section{Methodology}
 
-\subsection{Dimensionality Reduction Methods}
+\subsection{Linear Dimensionality Reduction}
 \subsubsection{Linear Discriminant Analysis}
 Linear Discriminant Analysis (LDA) aims to find a linear combination of features with weight matrix $\mathbf{w}$ to transform the data into linear space, ensuring that the seperation between different 
 classes is maximized while the variance with each class is minimized.
 \vspace{0.5cm}
 
-\noindent \textbf{Step 1: Mean Value Computation}
+\noindent \textit{\textbf{Step 1: Mean Value Computation}}
 
 With given m classes \{$w_1$, $w_2$, ... $w_m$\}, there are c samples in each class w: \{$X_1$, $X_2$, ... $X_c$\}. For each sample vector, it has n features, \{$x_1$, $x_2$, ... , $x_n$\}. In this experiment, \textbf{n=784}.
 
 Overall Mean:
-\begin{equation}
+\[
     \mu_t = \frac{1}{N}\sum_{i=1}^{N} x_i
-\end{equation}
+\]
 
 Class Mean:
-\begin{equation}
+\[
     \mu_i = \frac{1}{n_i}\sum_{j=1}^{n_i} x_j
-\end{equation}
+\]
 
 Where $N$ is the total number of samples, and $n_i$ is the number of samples in class $w_i$.
 
 \vspace{0.5cm}
-\noindent \textbf{Step 2: Scatter Matrix Computation}
+\noindent \textit{\textbf{Step 2: Scatter Matrix Computation}}
 
 Between-Class Scatter Matrix:
-\begin{equation}
+\[
     S_B=n_i*\sum_{j=1}^{m}(\mu_j-\mu_t)(\mu_j-\mu_t)^T
-\end{equation}
+\]
 
 Within-Class Scatter Matrix:
-\begin{equation}
+\[
     S_W=\sum_{j=1}^{m}\sum_{x_i \in w_j}(x_i-\mu_j)(x_i-\mu_j)^T
-\end{equation}
+\]
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{Images/LDA_scatter_compute.png}
     \caption{Scatter Computation Code}
     \label{fig:S_C}
 \end{figure}
-\noindent \textbf{Step 3: Weight Matrix Computation}
+\noindent \textit{\textbf{Step 3: Weight Matrix Computation}}
 
 As I mentioned before, the LDA aims to find the optimal weight matrix to seperate classes on two dimension, equaling to the problem: maximize the ratio of between-class scatter to within-class scatter.
 \begin{equation}
@@ -144,12 +145,12 @@ Therefore, the $\mathbf{w}$ is the eigenvectors matrix according to eigenvalue $
     \caption{Eigenvector Matrix Computation}
     \label{fig:E_M_C}
 \end{figure}
-\noindent \textbf{Step 4: Transform Dataset}
+\noindent \textit{\textbf{Step 4: Transform Dataset}}
 
 After getting the weight matrix, the transformation of input data $\mathbf{X}$ is:
-\begin{equation}
+\[
     \mathbf{Y} = \mathbf{X}\mathbf{w}^*
-\end{equation}
+\]
 
 In practice, we will choose the $k^{th}$ value of sorted eigenvalues to form $\mathbf{w}^*$. Theoritically, LDA is designed to project samples onto 
 a lower-dimensional subspace, with the dimensionality being at most C - 1, because the rank of $S_B$ is at most C-1, C is the number of classes.
@@ -159,25 +160,25 @@ Similar to LDA, Principal Component Analysis (PCA) is another effective method t
 different dimensions without limitaion like LDA. The projected data after PCA will also seperate largly, which means the redundency elements are eliminated.
 
 \vspace{0.5cm}
-\noindent \textbf{Step 1: Data Processing}
+\noindent \textit{\textbf{Step 1: Data Processing}}
 
 Before the projection, the data should be scaled and normalized, eliminating bias. Specifically, compute mean value to shift to 0 mean and covariance to 
 investigate the distribution situation of data.
 
 Covariance Matrix Computation:
-\begin{equation}
+\[
     \Sigma_i=\sum_{x_j \in w_i}^{n_i}(x_j-\mu_i)(x_j-\mu_i)^T
-\end{equation}
+\]
 
 Where $\mu_i$ is the mean value of class $w_i$
 
 \vspace{0.5cm}
-\noindent \textbf{Step 2: Eigenvectors Computation}
+\noindent \textit{\textbf{Step 2: Eigenvectors Computation}}
 
 The PCA aims to find the direction $\mathbf{w}$, the variance of data projected to that direction is largest. For the transformed data $Y=\mathbf{w}X$, variance computed:
-\begin{equation}
+\[
     Var(Y)=\frac{1}{N}\sum_{i=1}^N(w^Tx_i)^2=w^T\Sigma w
-\end{equation}
+\]
 
 Solving the $\mathop{\arg\max}\limits_{w}(w^T\Sigma w)$,
 \begin{equation}
@@ -193,15 +194,88 @@ matrix $\mathbf{w}^*$.
     \label{fig:PCA}
 \end{figure}
 
-\noindent \textbf{Step 3: Transform Dataset}
+\noindent \textit{\textbf{Step 3: Transform Dataset}}
 
 With above process, we can get the corresponding optimal weight matrix, according to the input data and componenet coefficient k. Applying the matrix to input data, transformation finished.
 
 \subsubsection{Fisherfaces}
 
-Based on learning in course, I acknoledge that the reduction of feature equals to deleting redundant features. As for LDA, it can noly remains C-1 features, which causes the low accuracy after LDA. Whereas, the PCA with large component m
+Based on learning in course, I acknowledge that the reduction of feature equals to deleting redundant features, which can increase the accuray of models. However, when too much features deleted, the remaining features 
+may not includes all the information we need, which causes the decrease of accuray backward. Therefore, the best accuarcy of LDA towards high dimension data is much lower than PCA normally. To overcome this situation, 
+the Fisherfaces, which combines the LDA and PCA method is developed.
+
+For realization, I just handle the data with PCA to roughly decrease the dimension firstly. Then, I applied LDA based on the corresponding PCA space to finish the whole reduction.
+\subsection{Nonlinear Dimensionality Reduction}
+% \noindent \textit{\textbf{Manifold Definition:}} 
+ 
+A \textbf{manifold} is a topological space that locally resembles Euclidean space. 
+Intuitively, even if data lie in a high-dimensional ambient space $\mathbb{R}^D$, 
+their intrinsic degrees of freedom may be much smaller, forming a $d$-dimensional manifold $(d \ll D)$. 
+For example, images of a rotating object under fixed lighting conditions can be considered points on a 2D manifold embedded in a high-dimensional pixel space.
+
+Formally, a dataset $X = \{x_1, x_2, \ldots, x_N\}$ is assumed to lie on or near a smooth manifold $\mathcal{M}$ of dimension $d$. 
+The goal of \textbf{manifold learning} is to find a mapping $f: \mathbb{R}^D \to \mathbb{R}^d$ that preserves intrinsic geometric relationships among points.
+
+Unlike linear methods such as PCA, which only capture global linear structures, manifold learning methods exploit the underlying nonlinear geometry. I include manifold learning methods for 
+dimension reduction in this experiment.
 \subsubsection{Locally Linear Embedding}
+\noindent \textit{\textbf{Brief Introduction:}}
+
+Locally Linear Embedding (LLE) is a nonlinear dimensionality reduction algorithm that preserves local geometric relationships between neighboring data points. 
+It assumes that each data point and its neighbors lie on or close to a locally linear manifold. 
+LLE first reconstructs each data point as a linear combination of its nearest neighbors in the original high-dimensional space, then seeks a low-dimensional embedding that maintains these same reconstruction weights \cite{lle}.
+
+Let the dataset be $\{x_1, x_2, \ldots, x_N\}$, where each $x_i \in \mathbb{R}^D$. 
+For each data point $x_i$, find its $K$ nearest neighbors $\mathcal{N}(i)$ using Euclidean distance. 
+Each point is reconstructed from its neighbors:
+\[
+x_i \approx \sum_{j \in \mathcal{N}(i)} w_{ij} x_j
+\]
+
+The reconstruction weights $w_{ij}$ are obtained by minimizing the local reconstruction error:
+\begin{equation}
+\min_{W} \sum_{i=1}^{N} \left\| x_i - \sum_{j \in \mathcal{N}(i)} w_{ij} x_j \right\|^2
+\end{equation}
+
+subject to the constraint:
+\[
+\sum_{j \in \mathcal{N}(i)} w_{ij} = 1
+\]
+
+These weights capture the intrinsic geometry of the data.
+
+In the embedding step, we find low-dimensional representations $y_i \in \mathbb{R}^d$ $(d \ll D)$ that preserve the same reconstruction weights:
+\begin{equation}
+\min_{Y} \sum_{i=1}^{N} \left\| y_i - \sum_{j \in \mathcal{N}(i)} w_{ij} y_j \right\|^2
+\end{equation}
+
+subject to:
+\[
+\sum_i y_i = 0, \quad \frac{1}{N}\sum_i y_i y_i^T = I
+\]
+
+The optimal embedding $Y = [y_1, \ldots, y_N]^T$ is obtained by computing the bottom $(d+1)$ eigenvectors of the matrix:
+\begin{equation}
+M = (I - W)^T (I - W)
+\end{equation}
+
+and discarding the smallest eigenvector corresponding to the zero eigenvalue.
+
+\vspace{0.5cm}
+\noindent \textit{\textbf{Implementation:}}
+
+In this experiment, I implemted the LLE by using the \texttt{LocallyLinearEmbedding} class from \texttt{scikit-learn}. 
+The key parameters are the number of neighbors (\texttt{n\_neighbors}) and the target embedding dimension (\texttt{n\_components}).  
+Below shows an example code used in this experiment:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/lle.png}
+    \caption{LLE Realization Code}
+    \label{fig:lle}
+\end{figure}
 \subsubsection{Isometric Mapping}
+\noindent \textit{\textbf{Brief Introduction:}}
+\cite{isomap}
 \subsubsection{Pairwise Controlled Manifold Approximation}
 
 \subsection{Classifiers Establishment}
@@ -215,7 +289,7 @@ Based on learning in course, I acknoledge that the reduction of feature equals t
 \section{Results and Discussion}
 
 \section{Conclusion}
-abc\cite{fodor_survey_2002}
+
 
 \newpage
 \bibliographystyle{ieeetr}
