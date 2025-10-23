@@ -354,8 +354,25 @@ As mentioned in to essay, developers have embeded PaCMAP in Python. We can imple
 Since it is a very new tool designed to reduce the dimension of data to visualiza the relation between high dimension features, \texttt{pacmap} only allows to reduce the total dataset, different from the previous methods package usage, which 
 can be seen by comparing the realization of PaCMAP (Figure~\ref{fig:PaCMAP}) with Isomap (Figure~\ref{fig:isomap_code}) or LLE (Figure~\ref{fig:lle}).
 \subsection{Classifiers Establishment}
+After reducing the dimension, I need to verify the influence of these reduction methods. Therefore, I need to develope classifiers and use their performance (accuracy) to judge the effection of datashape changes.
 \subsubsection{Minimun Mahalanobis Distance Classifier}
+Mahalanobis Distance represents the difference between two images. The MMD classifier refers to divide the input image data to the class which contains the nearest image data.
+
+The Mahalanobis Distance of sample $X=\{x_1,x_2, ...\}$ to class $w_j$:
+\[
+D_{j}=(X-\mu_j)\Sigma_j^{-1}(X-\mu_j)^T
+\] 
+
+Where $\mu_j$ is the mean value of data in class, $\Sigma_j$ is the covariance of class data.
+
+There is possible that covariance may be singular, leading no inversion. So I added the covariance with \texttt{1e-6 * np.eye(X.shape[1]) } to avoid singular condition.
+
+After getting the distance of input point to each classes, the predicted label of input point is considered to 
+\[
+\mathop{\arg\min}\limits_{w_j}(D(X,w_j))
+\]
 \subsubsection{K-Nearest Neighbors Classifier}
+
 \subsubsection{Logistic Regression Classifier}
 
 \subsection{Evaluation Methods}
