@@ -318,8 +318,41 @@ The code snippet used in this work is shown in Figure~\ref{fig:isomap_code}, and
 \noindent \textit{\textbf{Brief Introduction:}}
 
 PaCMAP is a modern nonlinear dimensionality reduction method designed to preserve both local and global structures in high-dimensional data. 
-Unlike traditional methods such as t-SNE and UMAP, which primarily focus on local structure, or TriMAP, which emphasizes global relationships \cite{wang_dimension_2024}, PaCMAP balances 
+Unlike traditional methods such as t-SNE and UMAP, which primarily focus on local structure, or TriMAP, which emphasizes global relationships, PaCMAP balances 
 these by controlling three types of point-pair relationships:
+\begin{itemize}
+    \item \textbf{Neighbor pairs:} Preserve local neighborhood structure.
+    \item \textbf{Mid-near pairs:} Preserve medium-range relationships.
+    \item \textbf{Far pairs:} Prevent collapse of distant points and maintain global separation.
+\end{itemize}
+
+The main objective of PaCMAP is to optimize a low-dimensional embedding such that these point-pair relationships are faithfully preserved, producing a high-quality representation suitable for visualization and downstream tasks \cite{wang_dimension_2024}.
+PaCMAP's objective function consists of three components corresponding to the three types of point pairs:
+
+\begin{equation}
+    {L}_{\text{PaCMAP}} = {L}_{\text{neighbors}} + {L}_{\text{mid-near}} + {L}_{\text{far}}
+\end{equation}
+where:
+\begin{itemize}
+    \item ${L}_{\text{neighbors}}$ measures the discrepancy of neighbor pairs in low-dimensional space relative to the original space.  
+    \item ${L}_{\text{mid-near}}$ measures the preservation of mid-range distances.  
+    \item ${L}_{\text{far}}$ ensures that distant points remain well separated.  
+\end{itemize}
+
+The specific loss formulations and weighting schemes can be found in the original paper \cite{wang_dimension_2024}.
+
+\vspace{0.5cm}
+\noindent \textit{\textbf{Implementation:}}
+As mentioned in to essay, developers have embeded PaCMAP in Python. We can implement the reduction method by using the \texttt{pacmap} package as follows:
+\begin{figure}[H]
+    \centering 
+    \includegraphics[width=0.8\textwidth]{Images/PaCMAP.png}
+    \caption{PaCMAP Realization Code}
+    \label{fig:PaCMAP}
+\end{figure}
+
+Since it is a very new tool designed to reduce the dimension of data to visualiza the relation between high dimension features, \texttt{pacmap} only allows to reduce the total dataset, different from the previous methods package usage, which 
+can be seen by comparing the realization of PaCMAP (Figure~\ref{fig:PaCMAP}) with Isomap (Figure~\ref{fig:isomap_code}) or LLE (Figure~\ref{fig:lle}).
 \subsection{Classifiers Establishment}
 \subsubsection{Minimun Mahalanobis Distance Classifier}
 \subsubsection{K-Nearest Neighbors Classifier}
