@@ -275,7 +275,45 @@ Below shows an example code used in this experiment:
 \end{figure}
 \subsubsection{Isometric Mapping}
 \noindent \textit{\textbf{Brief Introduction:}}
-\cite{isomap}
+
+Isometric Mapping (Isomap) is a nonlinear dimensionality reduction method based on the manifold learning assumption, which posits that high-dimensional data lie on a low-dimensional nonlinear manifold. 
+Unlike linear methods such as PCA, Isomap seeks to preserve the intrinsic geometry of the manifold by approximating geodesic distances between points \cite{isomap}.
+
+For a dataset $\{x_1, x_2, \ldots, x_N\} \subset \mathbb{R}^D$, Isomap constructs a neighborhood graph connecting each point to its $K$ nearest neighbors. 
+The edges are weighted by the Euclidean distance between connected points. 
+The geodesic distance between any two points $x_i$ and $x_j$ is then approximated by the shortest path distance in this graph:
+\begin{equation}
+D_G(i,j) = \min_{\text{paths } i \to j} \sum_{(p,q) \in \text{path}} \|x_p - x_q\|
+\label{eq:isomap_geodesic}
+\end{equation}
+
+Once the matrix of geodesic distances $D_G$ is obtained, classical Multidimensional Scaling (MDS) is applied to compute a low-dimensional embedding $Y \in \mathbb{R}^{N \times d}$ that best preserves these distances. 
+The centered inner-product matrix is calculated as
+\begin{equation}
+B = -\frac{1}{2} H D_G^2 H, \quad \text{where } H = I - \frac{1}{N}\mathbf{1}\mathbf{1}^T
+\label{eq:isomap_mds}
+\end{equation}
+
+and the embedding is obtained from the top $d$ eigenvectors of $B$:
+\[
+Y = V_d \Lambda_d^{1/2}
+\]
+
+where $\Lambda_d$ contains the $d$ largest eigenvalues, and $V_d$ the corresponding eigenvectors.  
+The resulting low-dimensional coordinates preserve the manifold’s intrinsic global geometry.
+
+\vspace{0.5cm}
+\noindent \textit{\textbf{Implementation:}}
+
+Isomap can be implemented using the \texttt{Isomap} class from \texttt{scikit-learn}. 
+The main parameters are the number of neighbors (\texttt{n\_neighbors}) and the target embedding dimension (\texttt{n\_components}).  
+The code snippet used in this work is shown in Figure~\ref{fig:isomap_code}, and the resulting 2D embedding is visualized for comparison with other methods.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/Isomap.png}
+    \caption{Isomap Realization Code}
+    \label{fig:isomap_code}
+\end{figure}
 \subsubsection{Pairwise Controlled Manifold Approximation}
 
 \subsection{Classifiers Establishment}
