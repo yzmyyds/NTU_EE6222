@@ -386,7 +386,20 @@ I successfully simulated this selecting processs with \texttt{np.argmin()} funct
     \label{fig:MMDpred}
 \end{figure}
 \subsubsection{K-Nearest Neighbors Classifier}
+Basically, the foundamental principle of MMD and KNN follows are same: just consider the sample with smaller distance as the more similar points. If one class has plenty of similar points, the test sample have higher probability belongs to corresponding class. However, their actual realization methods are 
+different. 
 
+The MMD pay attention to the class, use mean in calss to represente the class feature and find the similarity between class mean and test sample. The KNN concentrate on the samples individually. The mechanism is to find the distances of test sample with each points in training, select the first k nearest neighbors, 
+and assigns the test point with the label appears most frequently among k points, which is called the Voting process Figure~ \ref{fig:knnvote}.
+
+Generallly, the realization process is similar to the MMD except the method of assigning label prediction.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Images/KNN_vote.png}
+    \caption{Voting Process of KNN}
+    \label{fig:knnvote}
+\end{figure}
 \subsubsection{Logistic Regression Classifier}
 
 \subsection{Evaluation Methods}
