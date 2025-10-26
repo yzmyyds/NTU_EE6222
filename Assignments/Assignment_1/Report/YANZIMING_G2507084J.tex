@@ -401,7 +401,72 @@ Generallly, the realization process is similar to the MMD except the method of a
     \label{fig:knnvote}
 \end{figure}
 \subsubsection{Logistic Regression Classifier}
+The logistic regression classifier models the probability that the output label $y$ equals $1$ given an input feature vector $x \in \mathbb{R}^d$:
+\[
+h_\theta(x) = P(y = 1 \mid x)
+\]
 
+To map the linear function $\theta^T x$ into the interval $[0, 1]$, we use the \textbf{sigmoid function}:
+\[
+h_\theta(x) = \sigma(\theta^T x) = \frac{1}{1 + e^{-\theta^T x}}
+\]
+
+where
+\[
+\sigma(z) = \frac{1}{1 + e^{-z}}.
+\]
+
+Classification is made according to:
+\[
+\hat{y} =
+\begin{cases}
+1, & \text{if } h_\theta(x) \ge 0.5, \\
+0, & \text{if } h_\theta(x) < 0.5.
+\end{cases}
+\]
+
+Equivalently, the \textbf{decision boundary} satisfies:
+\[
+\theta^T x = 0.
+\]
+
+The cost function (negative log-likelihood) is defined as:
+\[
+J(\theta) = -\frac{1}{N} \sum_{i=1}^N \left[ y_i \log(h_\theta(x_i)) + (1 - y_i)\log(1 - h_\theta(x_i)) \right].
+\]
+
+It is derived from the likelihood:
+\[
+L(\theta) = \prod_{i=1}^{N} P(y_i \mid x_i; \theta)
+\]
+
+and the corresponding log-likelihood:
+\[
+\log L(\theta) = \sum_{i=1}^{N} \left[ y_i \log(h_\theta(x_i)) + (1 - y_i)\log(1 - h_\theta(x_i)) \right].
+\]
+
+
+The gradient of the cost function is given by:
+\[
+\frac{\partial J(\theta)}{\partial \theta} = \frac{1}{N} \sum_{i=1}^{N} (h_\theta(x_i) - y_i)x_i.
+\]
+
+The parameters are updated iteratively using:
+\[
+\theta := \theta - \alpha \frac{\partial J(\theta)}{\partial \theta},
+\]
+
+where $\alpha$ is the learning rate.
+
+The implementation of Logistic Regression Classifier is easy, because it had been included in \texttt{sklearn} package, I can establish it with simple codes:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Images/Log_regression.png}
+    \caption{Implentation of Logistic Regression Classifier}
+    \label{fig:logreg}
+\end{figure}
+
+This classifier has much more complex mechanism compared with KNN and MMD, therefore, this is the only one model I didn't write its program in myself.
 \subsection{Evaluation Methods}
 
 
