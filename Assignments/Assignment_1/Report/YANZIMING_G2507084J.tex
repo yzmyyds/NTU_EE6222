@@ -468,7 +468,16 @@ The implementation of Logistic Regression Classifier is easy, because it had bee
 
 This classifier has much more complex mechanism compared with KNN and MMD, therefore, this is the only one model I didn't write its program in myself.
 \subsection{Evaluation Methods}
+To evaluate the performance of different dimensionality reduction techniques,
+we used classification accuracy as the main metric.
+After embedding the high-dimensional data into lower-dimensional space
+(using PCA, LDA, LLE, Isomap, and PaCMAP), the reduced features were fed into
+different classifiers for supervised evaluation.
+I compared the classification accuracy across different reduced dimensions
+(e.g., 2D, 5D, 10D, ...) to analyze how each method preserves discriminative information.
 
+The experimental results and visual comparisons will be discussed in the following
+\textit{Results and Discussion} section.
 
 \section{Results and Discussion}
 
