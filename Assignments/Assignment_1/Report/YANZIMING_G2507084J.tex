@@ -88,7 +88,7 @@ After that, I split the dataset into training set and testing set through \texti
 \subsection{Linear Dimensionality Reduction}
 \subsubsection{Linear Discriminant Analysis}
 Linear Discriminant Analysis (LDA) aims to find a linear combination of features with weight matrix $\mathbf{w}$ to transform the data into linear space, ensuring that the seperation between different 
-classes is maximized while the variance with each class is minimized.
+classes is maximized while the variance with each class is minimized \cite{fodor_survey_2002}.
 \vspace{0.5cm}
 
 \noindent \textit{\textbf{Step 1: Mean Value Computation}}
@@ -157,7 +157,7 @@ a lower-dimensional subspace, with the dimensionality being at most C - 1, becau
 
 \subsubsection{Principal Component Analysis}
 Similar to LDA, Principal Component Analysis (PCA) is another effective method to dimensionality reduction. The difference is PCA can project the input data to 
-different dimensions without limitaion like LDA. The projected data after PCA will also seperate largly, which means the redundency elements are eliminated.
+different dimensions without limitaion like LDA. The projected data after PCA will also seperate largly, which means the redundency elements are eliminated \cite{fodor_survey_2002}.
 
 \vspace{0.5cm}
 \noindent \textit{\textbf{Step 1: Data Processing}}
@@ -492,6 +492,7 @@ As I said, I selected several target dimensions to decrease the loop number. The
     \centering
     \includegraphics[width=0.8\textwidth]{Images/LogisticRegression_accuracy.png}
     \caption{Linear Reduction Performance with Linear\_regression}
+    \label{fig:p_linear}
 \end{figure}
 
 This is the performance graph of Linear Regression Classifier, I applied PCA, LDA, and Fisherfaces this three methods for reduction. 
@@ -508,9 +509,16 @@ This outcomes shows that the Fisher method may not suitable for this written num
     \centering
     \includegraphics[width=0.8\textwidth]{Images/manifold_methods_accuracy.png}
     \caption{Manifold Reduction Performance with Linear\_regression}
+    \label{fig:p_mani_linear}
 \end{figure}
 
+The above figure is the performance of three manifold reduction method: LLE, Isomap, and PaCMAP. Similar to linear method, with higher the dimension used, the better prediction accuracy will be generally.
 
+By comparing the linear method performance and manifold performance, I have following findings:
+\begin{enumerate}
+    \item Among all methods, the PaCMAP method seems have fast convergence speed. When the dimension increase to about 4 or 5, the accuracy score doesn't change anymore. In other words, PaCMAP could represented the principle feature of MINIST data most efficiently. PaCMAP is the most sauitable method for reducing dimension for this dataset.
+    \item For MINIST dataset, if we want to use low dimension for machine learning, Manifold may be more effective, because the accuracys of Isomap and PaCMAP are much higher than PCA and LDA for dimension in interval [5,10]. This may suggest that the MNIST dataset exhibit strong non-linear structures in its feature space.
+\end{enumerate}
 \subsection{Other Classifiers}
 \begin{figure}[H]
     \centering
@@ -524,7 +532,10 @@ This outcomes shows that the Fisher method may not suitable for this written num
     \centering
     \includegraphics[width=0.8\textwidth]{Images/kNN_accuracy.png}
     \caption{Linear Reduction Performance with KNN}
+    \label{fig:p_knn}
 \end{figure}
+
+In this experiment, I applied other classifiers in addition to the Linear Regression. Since the manifold methods are more complex than linaer methods, I only applied linear methods for three classifiers to find most appropriate classifier for testing by comparing accuracys and data feature. Finally, I decide to use Linear Regression for follwing nonlinear methods. However, I still want to show the performances of MMD and KNN here (Figure~\ref{fig:p_mmd}, \ref{fig:p_knn}). 
 \section{Conclusion}
 
 
