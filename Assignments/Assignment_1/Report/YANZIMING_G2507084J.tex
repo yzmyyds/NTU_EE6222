@@ -537,11 +537,62 @@ By comparing the linear method performance and manifold performance, I have foll
 
 In this experiment, I applied other classifiers in addition to the Linear Regression. Since the manifold methods are more complex than linaer methods, I only applied linear methods for three classifiers to find most appropriate classifier for testing by comparing accuracys and data feature. Finally, I decide to use Linear Regression for follwing nonlinear methods. However, I still want to show the performances of MMD and KNN here (Figure~\ref{fig:p_mmd}, \ref{fig:p_knn}). 
 \section{Conclusion}
+In this experiment, I used 6 reduction method and compared their performance on logistic regression classifier, based on the MINIST dataset. In addition, I compared the performance of different classifiers with same situation. 
 
+The most effective reduction method in this experiment is PaCMAP, which can reduce the 784 feature data to less than 10 dimensions with good performance accuracy. By the way, the PaCMAP is designed to show the relationship of data in 2 dimension, so its effectiveness hasn't been proved on higher dimension. According to my experiment, it is effective for MINIST dataset for dimensions other than 2 at least, which can be considered as one rough proof for its 
+effectiveness on other dimensions basically.
 
 \newpage
 \bibliographystyle{ieeetr}
 \bibliography{references}
 \newpage
 \section*{Appendix}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_importdata.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_classifier_mmd.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_classifier_knn.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_baseprediction.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_pca.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_lda.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_linearapply.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_linearvis.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_isomap.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_lle.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_pacmap.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/cell_manivis.png}
+\end{figure}
 \end{document}
