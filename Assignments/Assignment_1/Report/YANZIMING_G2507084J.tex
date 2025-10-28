@@ -480,31 +480,51 @@ The experimental results and visual comparisons will be discussed in the followi
 \textit{Results and Discussion} section.
 
 \section{Results and Discussion}
+
+Since the too huge dimension of origin data (784 features) and time costs of training, I use reduction methods to reduce the data to discreted dimension parameter n, which I selected as \{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50, 100, 300, 700\}. To show their differences, I plotted the accuracys corresponding to various reduced test data. 
+
+I divided the output graphs into two parts: performance of classifiers with linear reduction method and manifold reduction method to avoid the mess of too much lines in one graph. As for the baseline for comparation, I used the accuarcy of corresponding classifier trained with original data as baseline.
+
+As I said, I selected several target dimensions to decrease the loop number. Their graphs with original x-axis is difficult for reading with different intervals. Therefore, I applied the log method on the x-axis of graphs to simplify.
+\subsection{Linear Reduction Method Performance}
+
 \begin{figure}[H]
     \centering
-    \includegraphics{Images/MMD_accuracy.png}
+    \includegraphics[width=0.8\textwidth]{Images/LogisticRegression_accuracy.png}
+    \caption{Linear Reduction Performance with Linear\_regression}
+\end{figure}
+
+This is the performance graph of Linear Regression Classifier, I applied PCA, LDA, and Fisherfaces this three methods for reduction. 
+
+Generally, with the increasing of reduced dimension, the accuracys of each method are increasing as well. This phenomenon is more apparent when the dimension is less than 10. The increasing feature add information that could be used to predict the test label, therefore, the accuracy increases intensely. When the dimension becomes bigger, the accuracy increasing rate slow down.
+
+Individually, the LDA method accuracy remains constant after the 10th dimension, which follows the theory that LDA could only reduce the data to C-1 dimensions, where C is the number of features (full dimension). As for the PCA, when the dimension increased to about full dimension, I find that the accuracy decreased a bit compared with middle points, not increasing as before. 
+According to the previous introduction in Fisher, the too much features will infuence the classifier judge with trash information containing in some features, therefore, the accuracy may decrease a bit with high dimension. This is the reason of Fisherfaces developed. The Fisher indeed remains constant for high dimensions.
+
+By comparison, the PCA method could increase the accuracy to the baseline, even better with appropriate reduced dimension. The final LDA is much lower than baseline, with most features are neglected. As for Fisher, it combines the PCA and LDA, which overcomes the limitation of dimension, but still delete many features, leading to lower accuracy compared with PCA and baseline. 
+This outcomes shows that the Fisher method may not suitable for this written number dataset.
+\subsection{Manifold Reduction Method Performance}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/manifold_methods_accuracy.png}
+    \caption{Manifold Reduction Performance with Linear\_regression}
+\end{figure}
+
+
+\subsection{Other Classifiers}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/MMD_accuracy.png}
     \caption{Linear Reduction Performance with MMD}
     \label{fig:p_mmd}
 \end{figure}
 
+
 \begin{figure}[H]
     \centering
-    \includegraphics{Images/kNN_accuracy.png}
+    \includegraphics[width=0.8\textwidth]{Images/kNN_accuracy.png}
     \caption{Linear Reduction Performance with KNN}
 \end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics{Images/LogisticRegression_accuracy.png}
-    \caption{Linear Reduction Performance with Linear\_regression}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics{Images/manifold_methods_accuracy.png}
-    \caption{Manifold Reduction Performance with Linear\_regression}
-\end{figure}
-
 \section{Conclusion}
 
 
