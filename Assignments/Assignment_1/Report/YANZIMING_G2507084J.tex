@@ -514,7 +514,23 @@ This outcomes shows that the Fisher method may not suitable for this written num
 
 The above figure is the performance of three manifold reduction method: LLE, Isomap, and PaCMAP. Similar to linear method, with higher the dimension used, the better prediction accuracy will be generally.
 
-By comparing the linear method performance and manifold performance, I have following findings:
+When the dimension of data is reduced to small number (less than 10), the accuracys of different reduction methods on Logistic Regression are shown in following;
+\begin{table}[H]
+    \centering
+    \caption{Logistic Regression Accuracy (\%) with Different Dimensionality Reduction Methods}
+    \label{tab:lr_accuracy}
+    \begin{tabular}{l|cccccccccc}
+        \hline
+        Dimension & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\ \hline
+        PCA      & 31.8 & 44.9 & 46.8 & 58.6 & 65.6 & 70.9 & 74.4 & 76.0 & 77.2 & 78.3 \\
+        LDA      & 31.0 & 49.1 & 57.2 & 66.6 & 67.9 & 70.0 & 75.5 & 82.5 & 83.2 & 83.2 \\
+        Fisher   & 24.4 & 24.4 & 24.4 & 35.0 & 35.0 & 37.5 & 37.5 & 46.3 & 46.3 & 53.3 \\
+        Isomap   & 39.4 & 48.5 & 59.0 & 70.9 & 85.2 & 88.6 & 89.4 & 89.4 & 90.9 & 91.3 \\
+        LLE      & 21.8 & 32.2 & 43.7 & 43.1 & 45.7 & 57.4 & 58.4 & 62.5 & 65.7 & 65.7 \\
+        PaCMAP   & 73.8 & 88.5 & 91.1 & 92.9 & 93.2 & 93.8 & 92.3 & 93.1 & 93.3 & 94.2 \\ \hline
+    \end{tabular}
+\end{table}
+By comparing the linear method performance and manifold performance from Table~\ref{tab:lr_accuracy}, I get following two findings.
 \begin{enumerate}
     \item Among all methods, the PaCMAP method seems have fast convergence speed. When the dimension increase to about 4 or 5, the accuracy score doesn't change anymore. In other words, PaCMAP could represented the principle feature of MINIST data most efficiently. PaCMAP is the most sauitable method for reducing dimension for this dataset.
     \item For MINIST dataset, if we want to use low dimension for machine learning, Manifold may be more effective, because the accuracys of Isomap and PaCMAP are much higher than PCA and LDA for dimension in interval [5,10]. This may suggest that the MNIST dataset exhibit strong non-linear structures in its feature space.
