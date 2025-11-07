@@ -1,0 +1,85 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{hyperref}
+
+\title{Deep Learning Methods for Generating Tiger Videos}
+\author{Your Name}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Data}
+To generate realistic tiger videos, the dataset consists of video clips of tigers collected from wildlife footage and open-source datasets such as ImageNet-Vid, YouTube-VIS, or other animal video datasets.  
+The video clips are preprocessed by:
+\begin{itemize}
+    \item Resizing all frames to $128 \times 128$ pixels,
+    \item Extracting fixed-length clips (16 frames per clip),
+    \item Normalizing frame values and performing data augmentation such as random horizontal flipping, color jitter, and temporal jittering.
+\end{itemize}
+
+No labels are required since the generation task is unconditional. The model learns the underlying distribution of tiger videos in a fully unsupervised manner.  
+
+\section{Network Architecture}
+
+\subsection{Baseline: Video GAN (MoCoGAN)}
+The baseline model uses a GAN-based approach, where the generator maps a random noise vector into a sequence of video frames, and the discriminator evaluates the realism of both individual frames and temporal consistency across frames.
+
+\textbf{Generator:}
+\begin{itemize}
+    \item Takes a content latent vector $z_c$ (controls appearance) and a motion latent vector sequence $z_m(t)$ (controls temporal dynamics),
+    \item Uses 3D convolutions or ConvLSTM layers to generate a video clip.
+\end{itemize}
+
+\textbf{Discriminator:}
+\begin{itemize}
+    \item 2D CNN for per-frame realism,
+    \item 3D CNN for temporal consistency.
+\end{itemize}
+
+% \begin{figure}[h]
+%     \centering
+%     % Example placeholder for flowchart, replace with your diagram
+%     \includegraphics[width=0.7\textwidth]{mocogan_flowchart.png}
+%     \caption{Flow chart of MoCoGAN baseline for video generation.}
+% \end{figure}
+
+\subsection{Main Model: Latent Video Diffusion}
+The main model employs a diffusion-based approach to improve temporal consistency and visual quality.
+
+\textbf{Architecture:}
+\begin{itemize}
+    \item \textbf{VAE Encoder}: Encodes each frame into a latent space,
+    \item \textbf{Temporal U-Net / 3D U-Net with Attention}: Performs diffusion denoising in latent space across frames,
+    \item \textbf{Decoder}: Reconstructs video frames from latent representations.
+\end{itemize}
+
+The model is trained to iteratively remove noise added to latent representations of video frames, learning the underlying distribution of tiger video clips.
+
+% \begin{figure}[h]
+%     \centering
+%     % Example placeholder for flowchart, replace with your diagram
+%     \includegraphics[width=0.7\textwidth]{diffusion_flowchart.png}
+%     \caption{Flow chart of latent video diffusion model.}
+% \end{figure}
+
+\section{Other Resources}
+\begin{itemize}
+    \item \textbf{Hardware:} 2–4 GPUs (e.g., NVIDIA RTX 4090 or A100), with at least 24GB memory per GPU.
+    \item \textbf{Software:} PyTorch, HuggingFace Diffusers, PyTorch Lightning.
+    \item \textbf{Pretrained models:} Pretrained VAE or image encoder backbones can accelerate diffusion model training.
+    \item \textbf{Evaluation metrics:} Fréchet Video Distance (FVD), Frame-level FID, LPIPS for temporal perceptual similarity.
+\end{itemize}
+
+\section{Design Thoughts}
+Starting from a GAN-based baseline ensures rapid prototyping and feasibility, while the latent video diffusion model provides high-quality generation with improved temporal consistency.  
+The unconditional setting relies on tiger video data to implicitly guide the generation. Future extensions may include class-conditioned or text-guided generation for more controllable outputs.  
+
+GAN models may suffer from flickering and instability, whereas diffusion models are more stable but computationally intensive. Comparing these two approaches allows assessment of trade-offs between quality, temporal consistency, and training efficiency.
+
+\end{document}
