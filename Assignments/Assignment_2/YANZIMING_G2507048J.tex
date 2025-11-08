@@ -7,7 +7,7 @@
 \usepackage{tikz}
 \usepackage{hyperref}
 
-\title{Deep Learning Methods for Generating Tiger Videos}
+\title{Deep Learning Methods for Tiger Video Generation}
 \author{Your Name}
 \date{}
 
@@ -15,25 +15,34 @@
 \maketitle
 
 \section{Data}
-To generate realistic tiger videos, the dataset consists of video clips of tigers collected from wildlife footage and open-source datasets such as ImageNet-Vid, YouTube-VIS, or other animal video datasets.  
-The video clips are preprocessed by:
+
+\subsection{Tiger Image Dataset}
+To generate realistic tiger videos, high-resolution images of tigers are collected from wildlife footage and open-source datasets such as ImageNet-Vid and YouTube-VIS. Images include frontal, profile, and tilted views with diverse lighting conditions.  
+
+Preprocessing steps:
 \begin{itemize}
-    \item Resizing all frames to $128 \times 128$ pixels,
-    \item Extracting fixed-length clips (16 frames per clip),
-    \item Normalizing frame values and performing data augmentation such as random horizontal flipping, color jitter, and temporal jittering.
+    \item Resize all images to $128\times128$ pixels,
+    \item Normalize pixel values to fit model distribution,
+    \item Data augmentation: flipping, color jitter, and rotation to increase variability.
 \end{itemize}
 
-No labels are required since the generation task is unconditional. The model learns the underlying distribution of tiger videos in a fully unsupervised manner.  
+\subsection{Motion Data (Video Clips)}
+Videos of tigers exhibiting different movements (walking, running, turning) are extracted. Optical flow or keypoint-based motion representations are computed to provide temporal guidance.  
+
+\subsection{Audio (Optional)}
+If considering sound-driven motion (e.g., roar lip-sync), audio is processed into Mel-Spectrograms and temporally aligned with video frames.
+
+---
 
 \section{Network Architecture}
 
-\subsection{Baseline: Video GAN (MoCoGAN)}
-The baseline model uses a GAN-based approach, where the generator maps a random noise vector into a sequence of video frames, and the discriminator evaluates the realism of both individual frames and temporal consistency across frames.
+\subsection{GAN Baseline: MoCoGAN-style}
+The baseline framework uses a GAN to generate video clips from a random noise vector.
 
 \textbf{Generator:}
 \begin{itemize}
-    \item Takes a content latent vector $z_c$ (controls appearance) and a motion latent vector sequence $z_m(t)$ (controls temporal dynamics),
-    \item Uses 3D convolutions or ConvLSTM layers to generate a video clip.
+    \item Inputs: content latent vector $z_c$ (appearance) and motion latent vector $z_m(t)$ (temporal dynamics),
+    \item 3D convolutional layers or ConvLSTM to generate video sequences.
 \end{itemize}
 
 \textbf{Discriminator:}
@@ -44,42 +53,70 @@ The baseline model uses a GAN-based approach, where the generator maps a random 
 
 % \begin{figure}[h]
 %     \centering
-%     % Example placeholder for flowchart, replace with your diagram
-%     \includegraphics[width=0.7\textwidth]{mocogan_flowchart.png}
-%     \caption{Flow chart of MoCoGAN baseline for video generation.}
+%     % Placeholder for GAN flowchart
+%     \includegraphics[width=0.7\textwidth]{gan_flowchart.png}
+%     \caption{GAN baseline framework for video generation.}
 % \end{figure}
 
-\subsection{Main Model: Latent Video Diffusion}
-The main model employs a diffusion-based approach to improve temporal consistency and visual quality.
+\subsection{Diffusion-based Video Generator (Main)}
+Diffusion models generate temporally coherent tiger videos via iterative denoising in latent space.
 
 \textbf{Architecture:}
 \begin{itemize}
-    \item \textbf{VAE Encoder}: Encodes each frame into a latent space,
-    \item \textbf{Temporal U-Net / 3D U-Net with Attention}: Performs diffusion denoising in latent space across frames,
-    \item \textbf{Decoder}: Reconstructs video frames from latent representations.
+    \item Input: random noise video clip + motion condition,
+    \item 3D U-Net with temporal attention for denoising,
+    \item Optional latent VAE encoder/decoder for efficiency.
 \end{itemize}
 
-The model is trained to iteratively remove noise added to latent representations of video frames, learning the underlying distribution of tiger video clips.
+\textbf{Losses:}
+\begin{itemize}
+    \item Score matching loss for denoising,
+    \item Perceptual loss to preserve texture and details,
+    \item Optional temporal consistency loss.
+\end{itemize}
 
 % \begin{figure}[h]
 %     \centering
-%     % Example placeholder for flowchart, replace with your diagram
+%     % Placeholder for Diffusion flowchart
 %     \includegraphics[width=0.7\textwidth]{diffusion_flowchart.png}
-%     \caption{Flow chart of latent video diffusion model.}
+%     \caption{Diffusion-based video generation pipeline.}
 % \end{figure}
 
-\section{Other Resources}
+\subsection{Joint Motion Conditioning}
+For more controllable outputs, motion embeddings extracted from optical flow or pose keypoints can be injected into intermediate layers via adaptive normalization, ensuring realistic movement while preserving identity.
+
+---
+
+\section{Resources \& Infrastructure}
+
+\subsection{Pre-trained Models \& Tools}
 \begin{itemize}
-    \item \textbf{Hardware:} 2–4 GPUs (e.g., NVIDIA RTX 4090 or A100), with at least 24GB memory per GPU.
-    \item \textbf{Software:} PyTorch, HuggingFace Diffusers, PyTorch Lightning.
-    \item \textbf{Pretrained models:} Pretrained VAE or image encoder backbones can accelerate diffusion model training.
-    \item \textbf{Evaluation metrics:} Fréchet Video Distance (FVD), Frame-level FID, LPIPS for temporal perceptual similarity.
+    \item GAN: MoCoGAN pre-trained weights (optional),
+    \item Diffusion: pre-trained Video Diffusion Model or VAE backbone,
+    \item Motion extractor: RAFT or keypoint detector,
+    \item Audio: Librosa for Mel-Spectrogram extraction.
 \end{itemize}
 
-\section{Design Thoughts}
-Starting from a GAN-based baseline ensures rapid prototyping and feasibility, while the latent video diffusion model provides high-quality generation with improved temporal consistency.  
-The unconditional setting relies on tiger video data to implicitly guide the generation. Future extensions may include class-conditioned or text-guided generation for more controllable outputs.  
+\subsection{Hardware \& Data Pipeline}
+High-performance GPUs (e.g., NVIDIA A100 or RTX 4090) are recommended. Efficient data loaders (PyTorch DataLoader) support large-scale video batches.
 
-GAN models may suffer from flickering and instability, whereas diffusion models are more stable but computationally intensive. Comparing these two approaches allows assessment of trade-offs between quality, temporal consistency, and training efficiency.
+\subsection{Evaluation Metrics}
+\begin{itemize}
+    \item Video quality: FVD, PSNR, SSIM, LPIPS,
+    \item Identity preservation: cosine similarity via pre-trained recognition model (ArcFace),
+    \item Temporal consistency: Average Pose Distance (APD) or frame-to-frame motion correlation.
+\end{itemize}
+
+---
+
+\section{Design Philosophy \& Thoughts}
+
+\begin{itemize}
+    \item \textbf{Modular design:} Separate GAN baseline and diffusion modules for clear comparison.
+    \item \textbf{Temporal consistency:} Diffusion with temporal attention ensures smooth motion.
+    \item \textbf{Motion-content disentanglement:} Motion conditions are injected at intermediate layers, preserving spatial fidelity.
+    \item \textbf{Stage-wise training:} Pre-train modules individually before joint fine-tuning.
+    \item \textbf{Future extensions:} Text- or audio-conditioned tiger generation for controllable video synthesis.
+\end{itemize}
 
 \end{document}
