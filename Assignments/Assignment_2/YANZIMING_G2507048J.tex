@@ -7,6 +7,7 @@
 \usepackage{tikz}
 \usepackage{hyperref}
 \usepackage{amsfonts}
+\usepackage{float}
 
 
 \begin{document}
@@ -49,6 +50,12 @@ I proposed model is a \textbf{diffusion framework} for fake video generation bas
 which means the model will be trained to generate \textit{Trump's video} by learning to denoise a sequence of temporally coherent frames sampled from Gaussian noise. \\
 At each diffusion step, the network predicts the noise component to progressively reconstruct the clean video sequence.
 This architecture could emphasizes both \textbf{spatial appearance consistency} and \textbf{temporal motion coherence}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/Video_Generator.drawio.png}
+    \caption{Frame of Video Generation Model}
+    \label{fig:frame}
+\end{figure}
 \subsection{Input and Conditioning}
 Each training iteration samples a diffusion timestep $t$ and constructs a noisy video sequence $X_t$ as:
 \[
