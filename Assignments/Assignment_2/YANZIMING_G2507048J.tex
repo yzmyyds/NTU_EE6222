@@ -6,117 +6,167 @@
 \usepackage{subcaption}
 \usepackage{tikz}
 \usepackage{hyperref}
+\usepackage{amsfonts}
 
-\title{Deep Learning Methods for Tiger Video Generation}
-\author{Your Name}
-\date{}
 
 \begin{document}
-\maketitle
 
-\section{Data}
+\begin{titlepage}
+    \centering
+    \includegraphics[width=8cm]{Images/Nanyang_Technological_University-Logo.wine.png}\par\vspace{1cm}
+    {\scshape\LARGE Nanyang Technological University \par}
+    \vspace{1.5cm}
+    {\huge\bfseries EE6222 Machine Vision\par}
+    \vspace{0.5cm}
+    {\Large Assignment 2: Donald Trump Fake Video Generation\par}
+    \vspace{1cm}
+    {\large MSc in Electrical and Electronic Engineering\par}
+    {\large Yan Ziming\par}
+    {\large G2507084J\par}
+    \vfill
+    {\large \today \par}
+\end{titlepage}
 
-\subsection{Tiger Image Dataset}
-To generate realistic tiger videos, high-resolution images of tigers are collected from wildlife footage and open-source datasets such as ImageNet-Vid and YouTube-VIS. Images include frontal, profile, and tilted views with diverse lighting conditions.  
 
-Preprocessing steps:
+\section{Data Preparation}
+
+\subsection{Face Images}
+To generate realistic fake videos of Trump, high-resolution images of his faces with different perspectives are needed. I may get high quality dataset from open-source database such as authoritative image libraries and news agencies or mainstream media and documentaries. Images include frontal, profile, and tilted views with diverse lighting conditions.
+\subsubsection*{Preprocessing Steps:}
 \begin{itemize}
-    \item Resize all images to $128\times128$ pixels,
-    \item Normalize pixel values to fit model distribution,
+    \item Resize all images to $128\times128$ pixels (Unification),
+    \item Normalize pixel values to fit model distribution (Normalization),
     \item Data augmentation: flipping, color jitter, and rotation to increase variability.
 \end{itemize}
 
 \subsection{Motion Data (Video Clips)}
-Videos of tigers exhibiting different movements (walking, running, turning) are extracted. Optical flow or keypoint-based motion representations are computed to provide temporal guidance.  
-
-\subsection{Audio (Optional)}
-If considering sound-driven motion (e.g., roar lip-sync), audio is processed into Mel-Spectrograms and temporally aligned with video frames.
-
----
+Videos of Trump's exhibiting different movements (walking, talking, turning) and facial expressions in different conditions are extracted. Optical flow or keypoint-based motion representations are computed to provide temporal guidance.  
 
 \section{Network Architecture}
 
-\subsection{GAN Baseline: MoCoGAN-style}
-The baseline framework uses a GAN to generate video clips from a random noise vector.
-
-\textbf{Generator:}
+\subsection{Overview}
+I proposed model is a \textbf{diffusion framework} for fake video generation based on \textbf{transformer},
+which means the model will be trained to generate \textit{Trump's video} by learning to denoise a sequence of temporally coherent frames sampled from Gaussian noise. \\
+At each diffusion step, the network predicts the noise component to progressively reconstruct the clean video sequence.
+This architecture could emphasizes both \textbf{spatial appearance consistency} and \textbf{temporal motion coherence}.
+\subsection{Input and Conditioning}
+Each training iteration samples a diffusion timestep $t$ and constructs a noisy video sequence $X_t$ as:
+\[
+X_t = \sqrt{\alpha_t} X_0 + \sqrt{1 - \alpha_t}\,\epsilon, \quad \epsilon \sim \mathcal{N}(0, I),
+\]
+where $X_0$ denotes the original clean tiger video and $\epsilon$ is the added Gaussian noise.
+The model predicts the noise $\hat{\epsilon}_\theta(X_t, t)$ given:
 \begin{itemize}
-    \item Inputs: content latent vector $z_c$ (appearance) and motion latent vector $z_m(t)$ (temporal dynamics),
-    \item 3D convolutional layers or ConvLSTM to generate video sequences.
+    \item \textbf{Input:} a noisy video sequence $X_t = \{x_t^1, x_t^2, \dots, x_t^T\}$ consisting of $T$ frames,
+    \item \textbf{Temporal embedding:} sinusoidal or learned positional encoding that encodes the timestep $t$,
+    \item \textbf{Objective:} estimate the added noise and progressively reconstruct the clean sequence.
 \end{itemize}
 
-\textbf{Discriminator:}
+\subsection{Diffusion Backbone with Transformer Denoiser}
+The denoiser follows a \textbf{U-shaped Transformer} backbone, combining both spatial-temporal self-attention and hierarchical feature aggregation.
+
 \begin{itemize}
-    \item 2D CNN for per-frame realism,
-    \item 3D CNN for temporal consistency.
+    \item \textbf{Encoder:} extracts local and global representations from $X_t$. 
+    Each frame is first divided into non-overlapping patches, linearly projected into embeddings, and augmented with spatial and temporal positional encodings. 
+    The encoder applies alternating layers of \textit{spatial attention} (within each frame) and \textit{temporal attention} (across frames) to capture motion patterns and context.
+    
+    \item \textbf{Condition Injection:} conditioning information (class label or motion vector) is fused via \textbf{cross-attention} layers. 
+    The motion embeddings serve as queries to guide temporal consistency, while the class embedding modulates feature channels through \textbf{adaptive layer normalization (AdaLN)} or conditional scaling.
+
+    \item \textbf{Decoder:} mirrors the encoder with skip connections to preserve fine-grained spatial details. 
+    The decoder outputs the predicted noise $\hat{\epsilon}_\theta$ of the same dimensionality as $X_t$, which is used for the reverse diffusion step.
 \end{itemize}
 
-% \begin{figure}[h]
-%     \centering
-%     % Placeholder for GAN flowchart
-%     \includegraphics[width=0.7\textwidth]{gan_flowchart.png}
-%     \caption{GAN baseline framework for video generation.}
-% \end{figure}
+\noindent
+The overall denoising process can be formulated as:
+\[
+\hat{\epsilon}_\theta = f_\theta(X_t, t), \qquad 
+X_{t-1} = \frac{1}{\sqrt{\alpha_t}} \left( X_t - \frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}}\, \hat{\epsilon}_\theta \right) + \sigma_t z,
+\]
+where $f_\theta$ is the Transformer-based denoiser and $z \sim \mathcal{N}(0,I)$ is random noise.
 
-\subsection{Diffusion-based Video Generator (Main)}
-Diffusion models generate temporally coherent tiger videos via iterative denoising in latent space.
-
-\textbf{Architecture:}
+\subsection{Loss Functions}
+The training objective combines reconstruction and perceptual constraints:
 \begin{itemize}
-    \item Input: random noise video clip + motion condition,
-    \item 3D U-Net with temporal attention for denoising,
-    \item Optional latent VAE encoder/decoder for efficiency.
+    \item \textbf{Denoising loss:} the standard diffusion training objective encourages the model to predict the noise added to the video. Formally, it is defined as
+    \[
+    \mathcal{L}_{\mathrm{denoise}} = \mathbb{E}_{t, X_0, \epsilon} \Big[ \left\| \epsilon - \hat{\epsilon}_\theta(X_t, t) \right\|_2^2 \Big],
+    \]
+    \item \textbf{Perceptual loss:} computed in feature space (e.g., VGG or CLIP), ensuring texture fidelity and visual realism.
+    \item \textbf{Temporal consistency loss:} penalizes frame-to-frame discrepancies to encourage smooth and coherent motion:
+    \[
+    \mathcal{L}_{\text{temp}} = \sum_t \| \phi(x_{t+1}) - \phi(x_t) \|_2^2,
+    \]
+    where $\phi(\cdot)$ is a feature extractor.
 \end{itemize}
 
-\textbf{Losses:}
+The total loss is a weighted sum:
+\[
+\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{MSE}} + \lambda_1 \mathcal{L}_{\text{perceptual}} + \lambda_2 \mathcal{L}_{\text{temp}}.
+\]
+
+\section{Potential Improvements}
+Up till now, a deep learning-based fake video generation model has been established, which satisfies the basic requirements of the assignment. 
+However, this model cannot generate personalized or controllable videos, meaning that the actions of Donald Trump in the generated video cannot be explicitly directed. 
+To address this limitation and further enhance motion realism, a \textbf{joint motion conditioning module} can be introduced.
+
+\subsection{Motion Embedding from Text and Reference Video}
+Instead of relying solely on optical flow or 2D pose keypoints, the motion embedding can be extracted from:
 \begin{itemize}
-    \item Score matching loss for denoising,
-    \item Perceptual loss to preserve texture and details,
-    \item Optional temporal consistency loss.
+    \item A \textbf{text description} of the desired action (e.g., "walking forward and raising right hand"),
+    \item A \textbf{reference video} demonstrating the motion trajectory.
 \end{itemize}
+A lightweight Motion Encoder $g_\psi$ converts these multi-modal inputs into a compact motion embedding:
+\[
+m = g_\psi(\text{text description, reference video}).
+\]
 
-% \begin{figure}[h]
-%     \centering
-%     % Placeholder for Diffusion flowchart
-%     \includegraphics[width=0.7\textwidth]{diffusion_flowchart.png}
-%     \caption{Diffusion-based video generation pipeline.}
-% \end{figure}
+\subsection{Integration into Diffusion Backbone}
+The motion embedding $m$ can be incorporated into the Transformer denoiser through mechanisms such as \textbf{Cross-Attention layers}, allowing the network to selectively attend to motion cues across time frames,
 
-\subsection{Joint Motion Conditioning}
-For more controllable outputs, motion embeddings extracted from optical flow or pose keypoints can be injected into intermediate layers via adaptive normalization, ensuring realistic movement while preserving identity.
-
----
+\subsection{Improvements}
+Introducing motion conditioning via text and reference video provides several advantages:
+\begin{itemize}
+    \item Enables more realistic and temporally coherent motion trajectories (e.g., walking, gesturing, turning),
+    \item Preserves spatial identity and appearance consistency of Donald Trump across frames,
+    \item Allows controllable video synthesis by modifying the text description or reference video, without retraining the entire diffusion model.
+\end{itemize}
 
 \section{Resources \& Infrastructure}
 
 \subsection{Pre-trained Models \& Tools}
 \begin{itemize}
-    \item GAN: MoCoGAN pre-trained weights (optional),
-    \item Diffusion: pre-trained Video Diffusion Model or VAE backbone,
-    \item Motion extractor: RAFT or keypoint detector,
-    \item Audio: Librosa for Mel-Spectrogram extraction.
+    \item \textbf{Diffusion Backbone:} pre-trained video diffusion models 
+    \item \textbf{Motion Encoder:} lightweight model to extract motion embeddings from optical flow, 2D/3D pose keypoints, reference video, or text description.
+    \item \textbf{Evaluation Tools:} Pre-trained identity models (ArcFace) and optical flow / pose extraction libraries (e.g., RAFT, OpenPose, MediaPipe) for quantitative metrics.
 \end{itemize}
 
 \subsection{Hardware \& Data Pipeline}
-High-performance GPUs (e.g., NVIDIA A100 or RTX 4090) are recommended. Efficient data loaders (PyTorch DataLoader) support large-scale video batches.
+\begin{itemize}
+    \item High-performance GPUs (e.g., NVIDIA A100, RTX 4090) recommended for training high-resolution video sequences.
+    \item Multi-GPU setups and mixed-precision training (FP16) to accelerate iterative denoising steps in diffusion models.
+    \item Efficient data pipeline: PyTorch DataLoader with video augmentation (temporal cropping, horizontal flipping, color jitter) for large-scale batches.
+    \item Adequate storage and memory for high-resolution videos and motion embeddings.
+\end{itemize}
 
 \subsection{Evaluation Metrics}
-\begin{itemize}
-    \item Video quality: FVD, PSNR, SSIM, LPIPS,
-    \item Identity preservation: cosine similarity via pre-trained recognition model (ArcFace),
-    \item Temporal consistency: Average Pose Distance (APD) or frame-to-frame motion correlation.
-\end{itemize}
 
----
+\hspace*{1.5em}\textbf{Video quality:} FVD (Fréchet Video Distance), PSNR, SSIM, LPIPS to evaluate realism and fidelity.
+
+\textbf{Identity preservation:} cosine similarity between generated and reference embeddings using pre-trained recognition models (e.g., ArcFace) to ensure appearance consistency.
+
+\textbf{Temporal consistency:} Average Pose Distance (APD), frame-to-frame motion correlation, or optical flow alignment to quantify smooth motion.
+
 
 \section{Design Philosophy \& Thoughts}
-
+\subsection{Philosophy}
 \begin{itemize}
-    \item \textbf{Modular design:} Separate GAN baseline and diffusion modules for clear comparison.
-    \item \textbf{Temporal consistency:} Diffusion with temporal attention ensures smooth motion.
-    \item \textbf{Motion-content disentanglement:} Motion conditions are injected at intermediate layers, preserving spatial fidelity.
-    \item \textbf{Stage-wise training:} Pre-train modules individually before joint fine-tuning.
-    \item \textbf{Future extensions:} Text- or audio-conditioned tiger generation for controllable video synthesis.
+    \item \textbf{Diffusion Backbone:} Leveraging iterative denoising in latent space ensures high-fidelity video frames. Temporal attention within the Transformer maintains smooth motion across frames.
+    
+    \item \textbf{Joint Motion Conditioning:} By embedding motion information from optical flow, 2D/3D pose sequences, reference videos, or textual descriptions, the network can generate temporally coherent and realistic motion trajectories. Cross-attention layers allow video features to selectively attend to motion cues, providing fine-grained control over generated actions.
+    
+    \item \textbf{Training Strategy:} Stage-wise training allows pre-training the diffusion backbone on large-scale video datasets, followed by fine-tuning with motion-conditioned inputs to achieve controllable video synthesis with minimal additional effort.
 \end{itemize}
-
+\subsection{Conclusion}
+Overall, this design balances \textit{video quality}, \textit{temporal consistency}, and \textit{action controllability} based on the diffusion method and transformer model, providing a flexible and extensible framework for generating realistic videos of Donald Trump performing desired motions.
 \end{document}
