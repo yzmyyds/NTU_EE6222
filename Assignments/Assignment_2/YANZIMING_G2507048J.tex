@@ -49,7 +49,7 @@ Videos of Trump's exhibiting different movements (walking, talking, turning) and
 I proposed model is a \textbf{diffusion framework} for fake video generation based on \textbf{transformer},
 which means the model will be trained to generate \textit{Trump's video} by learning to denoise a sequence of temporally coherent frames sampled from Gaussian noise. \\
 At each diffusion step, the network predicts the noise component to progressively reconstruct the clean video sequence.
-This architecture could emphasizes both \textbf{spatial appearance consistency} and \textbf{temporal motion coherence}\cite{ding2025efficient_vdit}\cite{liu2025attention_video}.
+This architecture could emphasizes both \textbf{spatial appearance consistency} and \textbf{temporal motion coherence}\cite{ding2025efficientvditefficientvideodiffusion}\cite{liu2025understandingattentionmechanismvideo}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{Images/Video_Generator.drawio.png}
@@ -172,7 +172,7 @@ Introducing motion conditioning via text and reference video provides several ad
     
     \item \textbf{Joint Motion Conditioning:} By embedding motion information from optical flow, 2D/3D pose sequences, reference videos, or textual descriptions, the network can generate temporally coherent and realistic motion trajectories. Cross-attention layers allow video features to selectively attend to motion cues, providing fine-grained control over generated actions.
     
-    \item \textbf{Training Strategy:} Stage-wise training allows pre-training the diffusion backbone on large-scale video datasets, followed by fine-tuning with motion-conditioned inputs to achieve controllable video synthesis with minimal additional effort \cite{open_sora2025}.
+    \item \textbf{Training Strategy:} Stage-wise training allows pre-training the diffusion backbone on large-scale video datasets, followed by fine-tuning with motion-conditioned inputs to achieve controllable video synthesis with minimal additional effort \cite{peng2025opensora20trainingcommerciallevel}.
 \end{itemize}
 \subsection{Conclusion}
 Overall, this design balances \textit{video quality}, \textit{temporal consistency}, and \textit{action controllability} based on the diffusion method and transformer model, providing a flexible and extensible framework for generating realistic videos of Donald Trump performing desired motions.
