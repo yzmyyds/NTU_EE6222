@@ -52,7 +52,7 @@ At each diffusion step, the network predicts the noise component to progressivel
 This architecture could emphasizes both \textbf{spatial appearance consistency} and \textbf{temporal motion coherence}\cite{ding2025efficientvditefficientvideodiffusion}\cite{liu2025understandingattentionmechanismvideo}.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{Images/Video_Generator.drawio.png}
+    \includegraphics[width=0.6\textwidth]{Images/Video_Generator.drawio.png}
     \caption{Frame of Video Generation Model}
     \label{fig:frame}
 \end{figure}
@@ -61,7 +61,7 @@ Each training iteration samples a diffusion timestep $t$ and constructs a noisy 
 \[
 X_t = \sqrt{\alpha_t} X_0 + \sqrt{1 - \alpha_t}\,\epsilon, \quad \epsilon \sim \mathcal{N}(0, I),
 \]
-where $X_0$ denotes the original clean tiger video and $\epsilon$ is the added Gaussian noise.
+where $X_0$ denotes the original clean video and $\epsilon$ is the added Gaussian noise.
 The model predicts the noise $\hat{\epsilon}_\theta(X_t, t)$ given:
 \begin{itemize}
     \item \textbf{Input:} a noisy video sequence $X_t = \{x_t^1, x_t^2, \dots, x_t^T\}$ consisting of $T$ frames,
@@ -138,9 +138,7 @@ Introducing motion conditioning via text and reference video provides several ad
     \item Preserves spatial identity and appearance consistency of Donald Trump across frames,
     \item Allows controllable video synthesis by modifying the text description or reference video, without retraining the entire diffusion model.
 \end{itemize}
-
 \section{Resources \& Infrastructure}
-
 \subsection{Pre-trained Models \& Tools}
 \begin{itemize}
     \item \textbf{Diffusion Backbone:} pre-trained video diffusion models 
@@ -175,7 +173,8 @@ Introducing motion conditioning via text and reference video provides several ad
     \item \textbf{Training Strategy:} Stage-wise training allows pre-training the diffusion backbone on large-scale video datasets, followed by fine-tuning with motion-conditioned inputs to achieve controllable video synthesis with minimal additional effort \cite{peng2025opensora20trainingcommerciallevel}.
 \end{itemize}
 \subsection{Conclusion}
-Overall, this design balances \textit{video quality}, \textit{temporal consistency}, and \textit{action controllability} based on the diffusion method and transformer model, providing a flexible and extensible framework for generating realistic videos of Donald Trump performing desired motions.
+Recently, diffusion method has been a popular approach for image generation, which solves the collapse of classic GAN models. In addition, the trnsformer architecture could associate long-range dependencies. Therefore, I think the combination of diffusion and transformer may suitable to generate related high quality images, which is the frames of the video. 
+This is the main reason why I select transformer archetecture to establish the diffusion backbone of video generator.
 \newpage
 \bibliographystyle{ieeetr}
 \bibliography{reference}
