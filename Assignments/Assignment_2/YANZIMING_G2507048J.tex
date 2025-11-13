@@ -95,16 +95,9 @@ where $f_\theta$ is the Transformer-based denoiser and $z \sim \mathcal{N}(0,I)$
 \subsection{Loss Functions}
 The training objective combines reconstruction and perceptual constraints:
 \begin{itemize}
-    \item \textbf{Denoising loss:} the standard diffusion training objective encourages the model to predict the noise added to the video. Formally, it is defined as
-    \[
-    \mathcal{L}_{\mathrm{denoise}} = \mathbb{E}_{t, X_0, \epsilon} \Big[ \left\| \epsilon - \hat{\epsilon}_\theta(X_t, t) \right\|_2^2 \Big],
-    \]
+    \item \textbf{Denoising loss:} the standard diffusion training objective encourages the model to predict the noise added to the video.
     \item \textbf{Perceptual loss:} computed in feature space (e.g., VGG or CLIP), ensuring texture fidelity and visual realism.
-    \item \textbf{Temporal consistency loss:} penalizes frame-to-frame discrepancies to encourage smooth and coherent motion:
-    \[
-    \mathcal{L}_{\text{temp}} = \sum_t \| \phi(x_{t+1}) - \phi(x_t) \|_2^2,
-    \]
-    where $\phi(\cdot)$ is a feature extractor.
+    \item \textbf{Temporal consistency loss:} penalizes frame-to-frame discrepancies to encourage smooth and coherent motion.
 \end{itemize}
 
 The total loss is a weighted sum:
